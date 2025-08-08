@@ -54,7 +54,7 @@ INSERT INTO `users` (`name`, `tokens`, `xp`) VALUES
 INSERT INTO `coaches` (`name`, `description`, `cost`, `xp_award`, `red_flag`) VALUES
 ('Coach A', 'Focus on time management', 10, 5, 0),
 ('Coach B', 'Controversial methods', 10, 5, 1),
-('Coach C', 'Strength training', 10, 10, 0);
+('Coach C', 'Strength training', 10, 5, 0);
 
 -- Optional: mark Coach A as already unlocked by Alice
 INSERT INTO `coach_unlocks` (`user_id`, `coach_id`, `tokens_spent`, `xp_awarded`) VALUES

@@ -11,11 +11,15 @@ app.use(express.json());
 const coachesRoute = require('./src/routes/coaches');
 const unlocksRoute = require('./src/routes/unlocks');
 const userRoute = require('./src/routes/user');
+const historyRoute = require('./src/routes/history');
+
+
 const errorHandler = require('./src/middlewares/errorHandler');
 
 app.use('/api/coaches', coachesRoute);
 app.use('/api/unlock', unlocksRoute);
 app.use('/api/user', userRoute);
+app.use('/api/history', historyRoute);
 
 app.use(errorHandler);
 
