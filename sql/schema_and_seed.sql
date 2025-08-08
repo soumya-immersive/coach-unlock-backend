@@ -1,54 +1,61 @@
-CREATE DATABASE IF NOT EXISTS game_db;
-USE game_db;
+-- Drop and recreate database
+DROP DATABASE IF EXISTS `coach_app`;
+CREATE DATABASE `coach_app` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `coach_app`;
 
--- players
-DROP TABLE IF EXISTS players;
-CREATE TABLE players (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  username VARCHAR(100) NOT NULL,
-  tokens INT DEFAULT 0,
-  xp INT DEFAULT 0,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+-- Users table
+CREATE TABLE `users` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `name` VARCHAR(100) NOT NULL,
+  `tokens` INT NOT NULL DEFAULT 0,
+  `xp` INT NOT NULL DEFAULT 0,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
 
--- coaches
-DROP TABLE IF EXISTS coaches;
-CREATE TABLE coaches (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(150),
-  red_flag TINYINT(1) DEFAULT 0,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+-- Coaches table
+CREATE TABLE `coaches` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `name` VARCHAR(150) NOT NULL,
+  `description` TEXT,
+  `cost` INT NOT NULL DEFAULT 10,
+  `xp_award` INT NOT NULL DEFAULT 5,
+  `red_flag` TINYINT(1) NOT NULL DEFAULT 0,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
 
--- unlocks log
-DROP TABLE IF EXISTS unlocks;
-CREATE TABLE unlocks (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  player_id INT NOT NULL,
-  coach_id INT NOT NULL,
-  tokens_spent INT NOT NULL,
-  xp_awarded INT NOT NULL,
-  red_flag TINYINT(1) DEFAULT 0,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (player_id) REFERENCES players(id),
-  FOREIGN KEY (coach_id) REFERENCES coaches(id)
-);
+-- Unlocks log table
+CREATE TABLE `coach_unlocks` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id` INT NOT NULL,
+  `coach_id` INT NOT NULL,
+  `tokens_spent` INT NOT NULL,
+  `xp_awarded` INT NOT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`coach_id`) REFERENCES `coaches`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
--- xp_history
-DROP TABLE IF EXISTS xp_history;
-CREATE TABLE xp_history (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  player_id INT NOT NULL,
-  change_amount INT NOT NULL,
-  reason VARCHAR(255),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (player_id) REFERENCES players(id)
-);
+-- XP logs table
+CREATE TABLE `xp_logs` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id` INT NOT NULL,
+  `change` INT NOT NULL,
+  `reason` VARCHAR(255),
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
--- Seed
-INSERT INTO players (username, tokens, xp) VALUES ('alice', 50, 10), ('bob', 5, 0);
+-- Seed data for users
+INSERT INTO `users` (`name`, `tokens`, `xp`) VALUES
+('Alice', 50, 10),
+('Bob', 15, 0);
 
-INSERT INTO coaches (name, red_flag) VALUES
-('Coach A', 0),
-('Coach B', 1), -- red flag
-('Coach C', 0);
+-- Seed data for coaches
+INSERT INTO `coaches` (`name`, `description`, `cost`, `xp_award`, `red_flag`) VALUES
+('Coach A', 'Focus on time management', 10, 5, 0),
+('Coach B', 'Controversial methods', 10, 5, 1),
+('Coach C', 'Strength training', 10, 10, 0);
+
+-- Optional: mark Coach A as already unlocked by Alice
+INSERT INTO `coach_unlocks` (`user_id`, `coach_id`, `tokens_spent`, `xp_awarded`) VALUES
+(1, 1, 10, 5);
