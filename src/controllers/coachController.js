@@ -1,4 +1,3 @@
-// src/controllers/coachController.js
 const pool = require('../db');
 
 async function getCoachesForUser(req, res, next) {

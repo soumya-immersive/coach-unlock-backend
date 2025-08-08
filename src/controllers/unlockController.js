@@ -1,4 +1,3 @@
-// src/controllers/unlockController.js
 const pool = require('../db');
 
 async function unlockCoach(req, res, next) {

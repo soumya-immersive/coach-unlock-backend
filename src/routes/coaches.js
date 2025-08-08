@@ -1,4 +1,3 @@
-// src/routes/coaches.js
 const express = require('express');
 const router = express.Router();
 const { getCoachesForUser } = require('../controllers/coachController');
